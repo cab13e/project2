@@ -1,0 +1,14 @@
+﻿<Properties StartupConfiguration="{D4494381-2340-4700-9BDA-AB089D19E410}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="geneticKnapsack/Program.cs">
+    <Files>
+      <File FileName="geneticKnapsack/Program.cs" Line="44" Column="3" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.geneticKnapsack PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>
