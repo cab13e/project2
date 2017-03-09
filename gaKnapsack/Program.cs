@@ -44,7 +44,7 @@ class GA
 		var pop = new List<string>(); 
 
 		int j = 0;
-		for (int i = 0; i <= 100; i++)	
+		for (int i = 0; i < 100; i++)	
 		{
 			j = 0;
 			string chrom = "";
@@ -127,8 +127,8 @@ class GA
 		int p1, p2;
 		while (true)
 		{
-			p1 = Math.Max(rand.Next(0, _globals.knapsack.Count), rand.Next(0, _globals.knapsack.Count));
-			p2 = Math.Max(rand.Next(0, _globals.knapsack.Count), rand.Next(0, _globals.knapsack.Count));
+			p1 = Math.Max(rand.Next(0, 99), rand.Next(0, 99));
+			p2 = Math.Max(rand.Next(0, 99), rand.Next(0, 99));
 
 			par1 = population[p1];
 			par2 = population[p2];
@@ -246,6 +246,9 @@ class GA
 				totalCost += _globals.knapsack[i].cost;
 			}
 		}
+
+
+		Console.WriteLine("Fitness function called " + _globals._fitCount + " compared with an exhaustive search making " + Math.Pow(2,_globals.knapsack.Count) + " comparisons");
 
 		Console.WriteLine("final result = " + endGame[0] + " with total cost of " + totalCost + " and total value of " + totalvalue + "\nAfter " + time.Elapsed);
 	}

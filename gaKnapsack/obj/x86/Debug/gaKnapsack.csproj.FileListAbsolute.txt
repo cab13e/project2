@@ -4,3 +4,9 @@
 /Users/collinblanchard/Projects/gaKnapsack/gaKnapsack/obj/x86/Debug/gaKnapsack.csprojResolveAssemblyReference.cache
 /Users/collinblanchard/Projects/gaKnapsack/gaKnapsack/obj/x86/Debug/gaKnapsack.exe
 /Users/collinblanchard/Projects/gaKnapsack/gaKnapsack/obj/x86/Debug/gaKnapsack.exe.mdb
+/Users/collinblanchard/Desktop/AI/project2/gaKnapsack/bin/Debug/gaKnapsack.exe
+/Users/collinblanchard/Desktop/AI/project2/gaKnapsack/bin/Debug/gaKnapsack.exe.mdb
+/Users/collinblanchard/Desktop/AI/project2/gaKnapsack/bin/Debug/GAF.dll
+/Users/collinblanchard/Desktop/AI/project2/gaKnapsack/obj/x86/Debug/gaKnapsack.csprojResolveAssemblyReference.cache
+/Users/collinblanchard/Desktop/AI/project2/gaKnapsack/obj/x86/Debug/gaKnapsack.exe
+/Users/collinblanchard/Desktop/AI/project2/gaKnapsack/obj/x86/Debug/gaKnapsack.exe.mdb

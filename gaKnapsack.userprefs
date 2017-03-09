@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{73CAFBB8-C05E-44AB-8870-92D4E1FE84AC}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="gaKnapsack/Program.cs">
     <Files>
-      <File FileName="gaKnapsack/Program.cs" Line="151" Column="44" />
+      <File FileName="gaKnapsack/Program.cs" Line="254" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
