@@ -251,5 +251,8 @@ class GA
 		Console.WriteLine("Fitness function called " + _globals._fitCount + " compared with an exhaustive search making " + Math.Pow(2,_globals.knapsack.Count) + " comparisons");
 
 		Console.WriteLine("final result = " + endGame[0] + " with total cost of " + totalCost + " and total value of " + totalvalue + "\nAfter " + time.Elapsed);
+
+		Console.Beep();
+		Console.Beep();
 	}
 }
