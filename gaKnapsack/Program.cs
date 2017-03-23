@@ -61,35 +61,37 @@ class GA
 			pop.Add(chrom);
 		}
 
-		pop.Sort((a,b) =>Darwin(a).CompareTo(Darwin(b)));
+		pop.Sort((a,b) => -1 * Darwin(a).CompareTo(Darwin(b)));
+		//foreach (var blep in pop)
+			//Console.WriteLine("{0} {1}", blep, Darwin(blep));
 		//Console.WriteLine("finished Genesis");
 		return pop;
 	}
 
 	public static double Darwin(string chrom)
 	{
-		
-		double fitness = 0;
+		double cost = 0, val = 0;
 		int i = 0;
 		foreach(char c in chrom)
 		{
-			if(_globals.knapsack[i].cost < _globals.capacity)
-				fitness += _globals.knapsack[i].value;
-			else
+			if (c == '1')
 			{
-				fitness = 0;
-				break;
+				val += _globals.knapsack[i].value;
+				cost += _globals.knapsack[i].cost;
 			}
+			i++;
 		}
+
 		_globals._fitCount++;
-		return fitness;
+
+		return cost > _globals.capacity ? 0 : val;
 	}
 
 	public static string logHasChild(string par1, string par2)
 	{
 		Random rand = new Random();
 
-		var cross = rand.Next(0, par1.Length);
+		var cross = rand.Next(1, par1.Length);
 
 		var child = "";
 
@@ -110,11 +112,11 @@ class GA
 					thing = '0';
 				else
 				{
-					thing = '0';
+					thing = '1';
 				}
 			}
 		}
-		//Console.WriteLine("had a child");
+		//Console.WriteLine(child);
 		return child;
 	}
 
@@ -122,13 +124,12 @@ class GA
 	{
 		Random rand = new Random();
 		var baseInterval = new TimeSpan(0, 10, 0);
-		int apocalypseNow = 0;
 		string par1, par2;
 		int p1, p2;
 		while (true)
 		{
-			p1 = Math.Max(rand.Next(0, 99), rand.Next(0, 99));
-			p2 = Math.Max(rand.Next(0, 99), rand.Next(0, 99));
+			p1 = Math.Max(rand.Next(100), rand.Next(100));
+			p2 = Math.Max(rand.Next(100), rand.Next(100));
 
 			par1 = population[p1];
 			par2 = population[p2];
@@ -136,31 +137,17 @@ class GA
 			string child = logHasChild(par1, par2);
 			population.Add(child);
 
-			population.Sort((a, b) => Darwin(a).CompareTo(Darwin(b)));
+			population.Sort((a, b) => -1 * Darwin(a).CompareTo(Darwin(b)));
+			population.RemoveAt(100);
 
-			if (population[0] == population[population.Count()-1])
+			//Console.WriteLine(_globals.apocalypseNow);
+
+			if (string.Equals(population[0],population[99]))
 			{
-				var temp = new List<string>();
-
-				foreach (var thing in population.Skip(0))
-				{
-					temp.Add(population[0]);
-				}
-
-				Catastrophe(temp);
-				Console.WriteLine("Cataclysm occured");
-				//temp = Genesis(temp.Count);
-
-				var temp2 = population[0];
-				population.Clear();
-				population.Add(temp2);
-				foreach (var thing in temp)
-				{
-					population.Add(thing);
-				}
-				apocalypseNow++;
+				Catastrophe(population);
 			}
-			if (apocalypseNow >= 3)
+
+			if (_globals.apocalypseNow >= 3)
 				return population;
 			if (TimeSpan.Compare(time.Elapsed, baseInterval) == 1)
 				return population;
@@ -171,6 +158,23 @@ class GA
 	public static List<string> Catastrophe(List<string> pop)
 	{
 		Random rand = new Random();
+
+		string hold = pop[0];
+
+		//Console.WriteLine(hold + "\n\n");
+
+		if (string.Equals(hold,_globals.survivor))
+			_globals.apocalypseNow++;
+		else
+			_globals.apocalypseNow = 0;
+
+		foreach(var thing in pop.Skip(1))
+		{
+			if (!string.Equals(thing,hold))
+				return pop;
+		}
+
+
 		for (int i = 0; i < pop.Count; i++)
 		{
 			var newbie = pop[i];
@@ -186,6 +190,11 @@ class GA
 				}
 			}
 		}
+		_globals.survivor = hold;
+		_globals._fitCount++;
+
+		pop.Sort((a, b) => -1 * Darwin(a).CompareTo(Darwin(b)));
+
 		return pop;
 	}
 
@@ -200,6 +209,8 @@ class GA
 		public static List<item> knapsack;
 		public static double capacity;
 		public static int _fitCount;
+		public static int apocalypseNow;
+		public static string survivor;
 	}
 
 	public static void Main()
@@ -218,22 +229,14 @@ class GA
 		_globals.capacity = tuple.Item1;
 		_globals.knapsack = tuple.Item2;
 
+		//Console.WriteLine(_globals.capacity);
+
 		var pop = Genesis(_globals.knapsack.Count);
+		//Console.WriteLine(pop[0] + "\n\n");
 
 		time.Start();
 		var endGame = Life(pop,time);
 		time.Stop();
-
-
-		//var crossover = new Crossover(1.0, true, CrossoverType.SinglePoint, ReplacementMethod.DeleteLast);
-
-		//var mutation = new BinaryMutate(.05, true);
-
-		//var algo = new GeneticAlgorithm(pop, EvaluateFitness);
-		//algo.Run(TerminateAlgorithm);
-
-		//algo.Operators.Add(crossover);
-		//algo.Operators.Add(mutation);
 
 		var check = endGame[0];
 		double totalCost=0, totalvalue=0;
@@ -246,7 +249,6 @@ class GA
 				totalCost += _globals.knapsack[i].cost;
 			}
 		}
-
 
 		Console.WriteLine("Fitness function called " + _globals._fitCount + " compared with an exhaustive search making " + Math.Pow(2,_globals.knapsack.Count) + " comparisons");
 

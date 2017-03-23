@@ -14,15 +14,15 @@ namespace GASudoku
 
 			for (int i = 0; i < 100; i++)
 			{
-				var chrom = _globals._puzzle;
+				int[,] chrom = (int[,])_globals._puzzle.Clone();
 
 				for (int j = 0; j < chrom.GetLength(0); j++)
 				{
 					for (int m = 0; m < chrom.GetLength(1); m++)
 					{
-						if (chrom[j, m] == 0 && !_globals._changes[j, m])
+						if (chrom[j, m] == 0)
 						{
-							int next = rand.Next(1, 6);
+							int next = rand.Next(1,7);
 							chrom[j, m] = next;
 						}
 					}
@@ -30,9 +30,22 @@ namespace GASudoku
 				//Console.WriteLine("creating " + chrom);
 				pop.Add(chrom);
 			}
-			pop.Sort((a, b) => Darwin(a).CompareTo(Darwin(b)));
+
+			pop.Sort((a, b) => -1 *  Darwin(a).CompareTo(Darwin(b)));
 
 			//Console.WriteLine("finished Genesis");
+
+			foreach (var thing in pop)
+			{
+				for (int i = 0; i < thing.GetLength(0); i++)
+				{
+					for (int j = 0; j < thing.GetLength(1); j++)
+						Console.Write(thing[i, j] + ",");
+					Console.WriteLine();
+				}
+				Console.WriteLine(Darwin(thing));
+			}
+
 			return pop;
 		}
 
@@ -106,23 +119,41 @@ namespace GASudoku
 						child[i, j] = par2[i, j];
 				}
 			}
-			/*for (int i = 0; i < child.GetLength(0); i++)
-			{
-				for (int j = 0; j < child.GetLength(1); j++)
-				{
-					if (rand.Next(1, 200) == 1 )
-					{
-						int next = rand.Next(1, 6);
-						child[i, j] = next;
-					}
-				}
-			}*/
+
+			//for (int i = 0; i < child.GetLength(0); i++)
+			//{
+			//	for (int j = 0; j < child.GetLength(1); j++)
+			//		Console.Write(child[i, j] + ",");
+			//	Console.WriteLine();
+			//}
+			//Console.WriteLine(Darwin(child));
+
 			return child;
 		}
 
 		public static List<int[,]> Apocalypse(List<int[,]> pop)
 		{
 			Random rand = new Random();
+
+			var hold = pop[0];
+
+			if (_globals.apocalypseNow != 0)
+			{
+				var equal = pop[0].Rank == _globals.survivor.Rank && Enumerable.Range(0, pop[0].Rank).All(dimension => pop[0].GetLength(dimension) == _globals.survivor.GetLength(dimension)) && pop[0].Cast<int>().SequenceEqual(_globals.survivor.Cast<int>());
+
+				if (equal)
+					_globals.apocalypseNow++;
+				else
+					_globals.apocalypseNow = 0;
+			}
+
+			foreach(var thing in pop.Skip(1))
+			{
+				var checker = pop[0].Rank == thing.Rank && Enumerable.Range(0, pop[0].Rank).All(dimension => pop[0].GetLength(dimension) == thing.GetLength(dimension)) && pop[0].Cast<int>().SequenceEqual(thing.Cast<int>());
+				if (!checker)
+					return pop;
+			}
+
 
 			for (int i = 0; i < pop.Count; i++)
 			{
@@ -135,27 +166,32 @@ namespace GASudoku
 						{
 							if (rand.Next(1, 5) == 1)
 							{
-								newbie[j, m] = rand.Next(1, 6);
+								newbie[j, m] = rand.Next(1, 7);
 							}
 						}
 					}
 				}
 			}
+
+			_globals.survivor = hold;
+
+			pop.Sort((a, b) => -1 * Darwin(a).CompareTo(Darwin(b)));
+
 			return pop;
 		}
 
 		public static List<int[,]> Life(List<int[,]> pop, Stopwatch time)
 		{
 			Random rand = new Random();
-			var baseInterval = new TimeSpan(0, 5, 0);
-			int apocalypseNow = 0;
-			int p1, p2;
+			//var baseInterval = new TimeSpan(0, 5, 0);
+			//int apocalypseNow = 0;
+			int p1, p2, i = 0;
 
 
 			while (Darwin(pop[0]) == 0)
 			{
-				p1 = Math.Max(rand.Next(0, 99), rand.Next(0, 99));
-				p2 = Math.Max(rand.Next(0, 99), rand.Next(0, 99));
+				p1 = Math.Max(rand.Next(100), rand.Next(100));
+				p2 = Math.Max(rand.Next(100), rand.Next(100));
 
 				var par1 = pop[p1];
 				var par2 = pop[p2];
@@ -163,39 +199,36 @@ namespace GASudoku
 				var child = babies(par1, par2);
 				pop.Add(child);
 
-				pop.Sort((a, b) => Darwin(a).CompareTo(Darwin(b)));
-				if (Darwin(pop[0]) == 126)
+
+				if (i % 1000 == 0)
+				{
+					Console.WriteLine("child " + i + " created");
+					Console.WriteLine(Darwin(pop[0]));
+				}
+
+				pop.Sort((a, b) => -1 * Darwin(a).CompareTo(Darwin(b)));
+
+				if (Darwin(pop[0]) != 0)
 					return pop;
 				
-				pop.RemoveAt(pop.Count - 1);
+				pop.RemoveAt(99);
 
 				var equal = pop[0].Rank == pop[pop.Count-1].Rank && Enumerable.Range(0, pop[0].Rank).All(dimension => pop[0].GetLength(dimension) == pop[pop.Count-1].GetLength(dimension)) && pop[0].Cast<int>().SequenceEqual(pop[pop.Count-1].Cast<int>());
 
 				if (equal)
 				{
-					var temp = new List<int[,]>();
-					//int xs = 1;
-
-					foreach (var thing in pop.Skip(0))
-					{
-						temp.Add(pop[1]);
-						//xs++;
-					}
-
-					Apocalypse(temp);
-					Console.WriteLine(apocalypseNow);
-					//temp = Genesis(temp.Count);
-
-					var temp2 = pop[0];
-					pop.Clear();
-					pop.Add(temp2);
-					foreach (var thing in temp)
-					{
-						pop.Add(thing);
-					}
-					apocalypseNow++;
+					Apocalypse(pop);
+					Console.WriteLine("apocalypse occurred");
+					Console.Beep();
+					Console.Beep();
 				}
-				if (TimeSpan.Compare(time.Elapsed, baseInterval) == 1)
+
+				i++;
+
+				//if (TimeSpan.Compare(time.Elapsed, baseInterval) == 1)
+				//	return pop;
+
+				if (_globals.apocalypseNow == 5)
 					return pop;
 			}
 			return pop;
@@ -205,6 +238,8 @@ namespace GASudoku
 		{
 			public static int[,] _puzzle;
 			public static bool[,] _changes;
+			public static int apocalypseNow;
+			public static int[,] survivor;
 		}
 
 		public static void Main()
@@ -213,6 +248,7 @@ namespace GASudoku
 
 			_globals._puzzle = new int[6, 6];
 			_globals._changes = new bool[6, 6];
+			_globals.apocalypseNow = 0;
 			for (int i = 0; i < 6; i++)
 			{
 				for (int j = 0; j < 6; j++)
