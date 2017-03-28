@@ -286,13 +286,13 @@ namespace GASudoku
 					pop = Apocalypse(pop);
 					//Console.WriteLine("apocalypse occurred");
 					Console.WriteLine(_globals.apocalypseNow);
-					timeSince = time;
+					timeSince.Restart();
 
 					//Console.Beep();
 					//Console.Beep();
 				}
 
-				if (TimeSpan.Compare(time.Elapsed, forceApo) == 1)
+				if (TimeSpan.Compare(timeSince.Elapsed, forceApo) == 1)
 				{
 					pop = Apocalypse(pop);
 					timeSince.Restart();
