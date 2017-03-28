@@ -224,8 +224,11 @@ namespace GASudoku
 		{
 			Random rand = new Random();
 			var baseInterval = new TimeSpan(0, 10, 0);
+			var forceApo = new TimeSpan(0, 0, 45);
 			//int apocalypseNow = 0;
 			int p1, p2, i = 0;
+			var timeSince = new Stopwatch();
+			timeSince.Start();
 
 
 			while (Darwin(pop[0]) != 0)
@@ -283,11 +286,18 @@ namespace GASudoku
 					pop = Apocalypse(pop);
 					//Console.WriteLine("apocalypse occurred");
 					Console.WriteLine(_globals.apocalypseNow);
-
+					timeSince = time;
 
 					//Console.Beep();
 					//Console.Beep();
 				}
+
+				if (TimeSpan.Compare(time.Elapsed, forceApo) == 1)
+				{
+					pop = Apocalypse(pop);
+					timeSince.Restart();
+				}
+
 
 				i++;
 
